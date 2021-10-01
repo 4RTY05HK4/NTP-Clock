@@ -76,7 +76,6 @@ h, m, seconds = clock_init_()
 date, czasZimowy, czasLetni = getDate()
 
 while True:
-    lightDetector()
     if seconds > 59 : 
         m = m + 1
         seconds = 0
@@ -100,6 +99,7 @@ while True:
     else : minute = str(m)
     time = ' ' + hour + ':' + minute
     if seconds == 0 : 
+        lightDetector()
         scrollDate(date)
         displayWord(time)
     secondTimer()
