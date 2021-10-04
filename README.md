@@ -23,4 +23,5 @@
 
 The device is programmed with micropython, uses four 8x8 LED matrixes, DS3231 and have automatic display dimming controlled by a light sensitivity sensor made with photoresistor and built-in ADC.
 
-
+## As of 4 October 2021 NTP functionality was added.
+Using standard HTTP protocol the device is now able to provide time and date. Any other IoT device than wants to get that information shall connect to the device on given IP address with given GET method. To prevent the clock from not working properly, as it is primary function of the device, the NTP functionality, as well as managing Wi-Fi was moved to secondary thread. Device and newly added functionality was tested for critical errors and none were detected, however it requires more testing before submitting the final version.
