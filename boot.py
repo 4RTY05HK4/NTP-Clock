@@ -36,45 +36,27 @@ clkPin.off()
  
 spi = machine.SoftSPI(baudrate=100000, polarity=0, phase=0, bits=8, sck = clkPin, mosi = dataPin, miso = misoPin)
 
-#station = network.WLAN(network.STA_IF)
-#
-#station.active(True)
-#station.ifconfig(('192.168.137.25', '255.255.255.0', '192.168.137.1', '192.168.137.1'))
-#station.connect(ssid, password)
-
 def RTCgetAddr():
     global RTCaddr
     RTCaddr = i2c.scan()
 
-def serialShiftByte(data): # zmienić nazwę
+def serialByteWrite(data):
     clkPin.off()
     spi.write(data)
 
-def serialWrite(address, data): # czy ta funkcja jest konieczna?
-    buffer = bytearray(2)
-    buffer[0] = address
-    buffer[1] = data
-
-    for i in range (0,4):
-        loadPin.off()
-        serialShiftByte(bytes([buffer[0]]))
-        serialShiftByte(bytes([buffer[1]]))
-        loadPin.on()
-        loadPin.off()
-
 def displayWrite(adres, dana1, dana2, dana3, dana4):
     loadPin.off()
-    serialShiftByte(bytes([adres]))
-    serialShiftByte(bytes([dana1]))
+    serialByteWrite(bytes([adres]))
+    serialByteWrite(bytes([dana1]))
     
-    serialShiftByte(bytes([adres]))
-    serialShiftByte(bytes([dana2]))
+    serialByteWrite(bytes([adres]))
+    serialByteWrite(bytes([dana2]))
     
-    serialShiftByte(bytes([adres]))
-    serialShiftByte(bytes([dana3]))
+    serialByteWrite(bytes([adres]))
+    serialByteWrite(bytes([dana3]))
     
-    serialShiftByte(bytes([adres]))
-    serialShiftByte(bytes([dana4]))
+    serialByteWrite(bytes([adres]))
+    serialByteWrite(bytes([dana4]))
     loadPin.on()
 
 def display_init_():
@@ -84,13 +66,6 @@ def display_init_():
     displayWrite(0x0a,0x00,0x00,0x00,0x00)
     displayWrite(0x09,0x00,0x00,0x00,0x00)
     displayWrite(0x0c,0x01,0x01,0x01,0x01)
-
-def display():
-    dana = [0,0,0,0]
-    for i in range (0,8):
-        for j in range (0,4):
-            dana[j] = digits5x8[j][i]
-        displayWrite(i+1, dana[0], dana[1], dana[2], dana[3])
 
 def displayMatrx(matrx):
     dana = [0,0,0,0]
