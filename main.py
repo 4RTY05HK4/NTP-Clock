@@ -2,7 +2,8 @@
 from boot import display_init_, displayWord, getTimeAndDate, lightDetector, scrollDate, timeChange
 from time import sleep
 from machine import Timer, disable_irq, enable_irq
- 
+import _thread
+
 interruptCounter = 0
 seconds = 0
 h = 0
@@ -60,6 +61,18 @@ def getDate():
     date = str1[3] + ", " + str1[4] + "-" + str1[5] + "-" + str1[6]
     return date, flagaCzasZ, flagaCzasL
 
+def getTimeNDate():
+    buff = getTimeAndDate()
+    str1 = ['','','','','','','',]
+    tab = [0, 0, 0, 0, 0, 0, 0]
+    for i in range (0,7):
+        tab[i] = int(hex(buff[i]).replace('0x',''))
+        if tab[i] < 10: str1[i] = "0" + str(tab[i])
+        else : str1[i] = str(tab[i])
+        if i == 6 : str1[i] = '20' + str(tab[i])
+    timeNdate = str1[2]+':'+str1[1]+':'+str1[0]+', '+str1[3]+', '+str1[4]+'-'+str1[5]+'-'+str1[6]
+    return timeNdate
+
 def clock_init_():
     h, m, seconds = getTime()
     date = getDate()
@@ -71,9 +84,44 @@ def clock_init_():
     displayWord(time)
     return h, m, seconds
 
+def requestHandler(requestCode):
+  if requestCode == 6:
+    requestResponse = getTimeNDate()
+  else:
+    requestResponse = "AuthError"
+
+  return requestResponse
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(('', 80))
+s.listen(5)
+
+def handleConnectionRequests():
+    station = network.WLAN(network.STA_IF)
+    
+    station.active(True)
+    station.ifconfig(('192.168.137.25', '255.255.255.0', '192.168.137.1', '192.168.137.1'))
+    station.connect(ssid, password)
+    while True:
+
+        if station.isconnected() == True:
+            conn, addr = s.accept()
+            request = conn.recv(1024)
+            request = str(request)
+            requestCode = request.find('/?getTimeNDate')
+            response = requestHandler(requestCode)
+            conn.send('HTTP/1.1 200 OK\n')
+            conn.send('Content-Type: text/html\n')
+            conn.send('Connection: close\n\n')
+            conn.sendall(response)
+            conn.close()
+
 display_init_()
+lightDetector()
 h, m, seconds = clock_init_()
 date, czasZimowy, czasLetni = getDate()
+
+_thread.start_new_thread(handleConnectionRequests, ())
 
 while True:
     if seconds > 59 : 

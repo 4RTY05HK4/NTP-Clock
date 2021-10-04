@@ -2,6 +2,11 @@
 import machine
 from chars import digits5x8
 from time import sleep
+try:
+  import usocket as socket
+except:
+  import socket
+import network
 
 data = 12   # pin connected to the serial input of the MAX7219 (DIN)
 miso = 13   # pin for input from the SPI bus (not used here)
@@ -10,6 +15,9 @@ clk  = 27   # pin for the clock of the serial link (CLK)
 adcPin  = 33   # pin for the adc converter
 sclPin = 25
 sdaPin = 26
+
+ssid = 'esp32-test'
+password = 'pasz12port'
 
 dataPin = machine.Pin(data, machine.Pin.OUT)
 misoPin = machine.Pin(miso, machine.Pin.OUT)
@@ -27,6 +35,12 @@ loadPin.off()
 clkPin.off()
  
 spi = machine.SoftSPI(baudrate=100000, polarity=0, phase=0, bits=8, sck = clkPin, mosi = dataPin, miso = misoPin)
+
+#station = network.WLAN(network.STA_IF)
+#
+#station.active(True)
+#station.ifconfig(('192.168.137.25', '255.255.255.0', '192.168.137.1', '192.168.137.1'))
+#station.connect(ssid, password)
 
 def RTCgetAddr():
     global RTCaddr
