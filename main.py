@@ -11,6 +11,7 @@ m = 0
 date = ""
 czasZimowy = False
 czasLetni = False
+DateUpdateRequired = False
 
 timer = Timer(0)  
  
@@ -97,11 +98,11 @@ s.bind(('', 80))
 s.listen(5)
 
 def handleConnectionRequests():
-    station = network.WLAN(network.STA_IF)
-    
+    station = network.WLAN(network.AP_IF)
     station.active(True)
+    station.config(essid='NTPserver', hidden=True, authmode=4, password='pasz12port')
     station.ifconfig(('192.168.137.25', '255.255.255.0', '192.168.137.1', '192.168.137.1'))
-    station.connect(ssid, password)
+    #station.connect(ssid, password)
     while True:
 
         if station.isconnected() == True:
@@ -120,7 +121,8 @@ display_init_()
 lightDetector()
 h, m, seconds = clock_init_()
 date, czasZimowy, czasLetni = getDate()
-
+#h, m, seconds = 23, 59, 55
+#date, czasZimowy, czasLetni = "poniedziałek, 04-10-2021", False, False
 _thread.start_new_thread(handleConnectionRequests, ())
 
 while True:
@@ -132,7 +134,10 @@ while True:
         h = h + 1
     if h > 23 : 
         h = 0
-        date, czasZimowy, czasLetni = getDate()
+        DateUpdateRequired = True
+    if h == 0 and m == 2 and DateUpdateRequired == True:
+        date, czasZimowy, czasLetni = getDate() 
+        DateUpdateRequired = False
     if h == 2 and czasZimowy == True:
         h = h - 1
         timeChange(czasZimowy, czasLetni)
@@ -146,9 +151,12 @@ while True:
     if m < 10 : minute = '0' + str(m)
     else : minute = str(m)
     time = ' ' + hour + ':' + minute
+    if seconds%10 == 0 : lightDetector()
     if seconds == 0 : 
-        lightDetector()
-        scrollDate(date)
+        if h > 21 or h < 6 and m%5 == 0 :
+            scrollDate(date)
+        elif h >= 6 and h <=21 :
+            scrollDate(date)
         displayWord(time)
     secondTimer()
 
