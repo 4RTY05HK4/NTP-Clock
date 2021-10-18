@@ -12,6 +12,7 @@ date = ""
 czasZimowy = False
 czasLetni = False
 DateUpdateRequired = False
+checkLightIntesity = False
 
 timer = Timer(0)  
  
@@ -151,9 +152,12 @@ while True:
     if m < 10 : minute = '0' + str(m)
     else : minute = str(m)
     time = ' ' + hour + ':' + minute
-    if seconds%10 == 0 : lightDetector()
+    if seconds%9 == 0 : checkLightIntesity = True
+    if seconds%10 == 0 and checkLightIntesity == True : 
+        lightDetector()
+        checkLightIntesity = False
     if seconds == 0 : 
-        if h > 21 or h < 6 and m%5 == 0 :
+        if (h > 21 or h < 6) and m%5 == 0 :
             scrollDate(date)
         elif h >= 6 and h <=21 :
             scrollDate(date)
