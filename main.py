@@ -1,5 +1,5 @@
 
-from boot import display_init_, displayWord, getTimeAndDate, lightDetector, scrollDate, timeChange
+from boot import display_init_, displayWord, getTimeAndDate, lightDetector, timeChange
 from time import sleep
 from machine import Timer, disable_irq, enable_irq
 import _thread
@@ -60,7 +60,7 @@ def getDate():
     flagaCzasZ, flagaCzasL = False, False
     if tab[5] == 10 and tab[4] >= 25 and tab[3] == 7 : flagaCzasZ = True
     if tab[5] == 3 and tab[4] >= 25 and tab[3] == 7 : flagaCzasL = True
-    date = str1[3] + ", " + str1[4] + "-" + str1[5] + "-" + str1[6]
+    date = str1[3] + ", " + str1[4] + "-" + str1[5] + "-" + str1[6] + "   "
     return date, flagaCzasZ, flagaCzasL
 
 def getTimeNDate():
@@ -83,7 +83,7 @@ def clock_init_():
     if m < 10 : minute = '0' + str(m)
     else : minute = str(m)
     time = ' ' + hour + ':' + minute
-    displayWord(time)
+    displayWord(time, False)
     return h, m, seconds
 
 def requestHandler(requestCode):
@@ -158,9 +158,9 @@ while True:
         checkLightIntesity = False
     if seconds == 0 : 
         if (h > 21 or h < 6) and m%5 == 0 :
-            scrollDate(date)
+            displayWord(date+time, True)
         elif h >= 6 and h <=21 :
-            scrollDate(date)
-        displayWord(time)
+            displayWord(date+time, True)
+        displayWord(time, False)
     secondTimer()
 

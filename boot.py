@@ -1,6 +1,6 @@
 
 import machine
-from chars import digits5x8
+from chars import digits5B, indexes
 from time import sleep
 try:
   import usocket as socket
@@ -68,124 +68,80 @@ def display_init_():
     displayWrite(0x0c,0x01,0x01,0x01,0x01)
 
 def displayMatrx(matrx):
-    dana = [0,0,0,0]
-    for i in range (0,8):
-        for j in range (0,4):
-            dana[j] = matrx[i][j]
-        displayWrite(i+1, dana[0], dana[1], dana[2], dana[3])
+    for address in range (0,8):
+        displayWrite(address+1, matrx[0][address], matrx[1][address], matrx[2][address], matrx[3][address])
 
-def displayWord(slowo):
-    dlugosc = len(slowo)
-    tab = [0 for i in range(dlugosc)]
-    w, h = 4, 8
-    matrx = [[0 for x in range(w)] for y in range(h)]
-    for i in range (0,8):
-        for j in range (0,dlugosc):
-            if slowo[j] == "0": tab[j] = digits5x8[0][i]
-            elif slowo[j] == "1": tab[j] = digits5x8[1][i]
-            elif slowo[j] == "2": tab[j] = digits5x8[2][i]
-            elif slowo[j] == "3": tab[j] = digits5x8[3][i]
-            elif slowo[j] == "4": tab[j] = digits5x8[4][i]
-            elif slowo[j] == "5": tab[j] = digits5x8[5][i]
-            elif slowo[j] == "6": tab[j] = digits5x8[6][i]
-            elif slowo[j] == "7": tab[j] = digits5x8[7][i]
-            elif slowo[j] == "8": tab[j] = digits5x8[8][i]
-            elif slowo[j] == "9": tab[j] = digits5x8[9][i]
-            elif slowo[j] == " ": tab[j] = digits5x8[10][i]
-            elif slowo[j] == ":": tab[j] = digits5x8[11][i]
-            elif slowo[j] == "a": tab[j] = digits5x8[12][i]
-            elif slowo[j] == "ą": tab[j] = digits5x8[13][i]
-            elif slowo[j] == "b": tab[j] = digits5x8[14][i]
-            elif slowo[j] == "c": tab[j] = digits5x8[15][i]
-            elif slowo[j] == "d": tab[j] = digits5x8[16][i]
-            elif slowo[j] == "e": tab[j] = digits5x8[17][i]
-            elif slowo[j] == "f": tab[j] = digits5x8[18][i]
-            elif slowo[j] == "g": tab[j] = digits5x8[19][i]
-            elif slowo[j] == "h": tab[j] = digits5x8[20][i]
-            elif slowo[j] == "i": tab[j] = digits5x8[21][i]
-            elif slowo[j] == "j": tab[j] = digits5x8[22][i]
-            elif slowo[j] == "k": tab[j] = digits5x8[23][i]
-            elif slowo[j] == "l": tab[j] = digits5x8[24][i]
-            elif slowo[j] == "ł": tab[j] = digits5x8[25][i]
-            elif slowo[j] == "m": tab[j] = digits5x8[26][i]
-            elif slowo[j] == "n": tab[j] = digits5x8[27][i]
-            elif slowo[j] == "o": tab[j] = digits5x8[28][i]
-            elif slowo[j] == "p": tab[j] = digits5x8[29][i]
-            elif slowo[j] == "r": tab[j] = digits5x8[30][i]
-            elif slowo[j] == "s": tab[j] = digits5x8[31][i]
-            elif slowo[j] == "ś": tab[j] = digits5x8[32][i]
-            elif slowo[j] == "t": tab[j] = digits5x8[33][i]
-            elif slowo[j] == "u": tab[j] = digits5x8[34][i]
-            elif slowo[j] == "w": tab[j] = digits5x8[35][i]
-            elif slowo[j] == "x": tab[j] = digits5x8[36][i]
-            elif slowo[j] == "y": tab[j] = digits5x8[37][i]
-            elif slowo[j] == "z": tab[j] = digits5x8[38][i]
-            elif slowo[j] == "-": tab[j] = digits5x8[39][i]
-            elif slowo[j] == ",": tab[j] = digits5x8[40][i]
 
-        for k in range (0,4):
-            if k == 0 : 
-                matrx[i][k] = (tab[0] << 3) + (tab[1] >> 2)               
-            elif k == 1 : 
-                stab = str(hex(tab[1]<<6))
-                if (tab[1]<<6) >= 0x100 :
-                    if stab[2] == "7" : matrx[i][k] = (tab[1]<<6) - 0x700 + (tab[2] << 1) + (tab[3] >> 4)
-                    elif stab[2] == "6" : matrx[i][k] = (tab[1]<<6) - 0x600 + (tab[2] << 1) + (tab[3] >> 4)
-                    elif stab[2] == "5" : matrx[i][k] = (tab[1]<<6) - 0x500 + (tab[2] << 1) + (tab[3] >> 4)
-                    elif stab[2] == "4" : matrx[i][k] = (tab[1]<<6) - 0x400 + (tab[2] << 1) + (tab[3] >> 4)
-                    elif stab[2] == "3" : matrx[i][k] = (tab[1]<<6) - 0x300 + (tab[2] << 1) + (tab[3] >> 4)
-                    elif stab[2] == "2" : matrx[i][k] = (tab[1]<<6) - 0x200 + (tab[2] << 1) + (tab[3] >> 4)
-                    elif stab[2] == "1" : matrx[i][k] = (tab[1]<<6) - 0x100 + (tab[2] << 1) + (tab[3] >> 4)
-                else : matrx[i][k] = (tab[1]<<6) + (tab[2] << 1) + (tab[3] >> 4)
-            elif k == 2 : 
-                if (tab[3] << 4) >= 256 : matrx[i][k] = (tab[3] << 4) - 256 + (tab[4] >> 1)
-                else : matrx[i][k] = (tab[3] << 4) + (tab[4] >> 1)
-            elif k == 3 : 
-                stab = str(hex(tab[4]<<7))
-                if (tab[4]<<7) >= 0x100 :
-                    if stab[2] == 'f' : matrx[i][k] = (tab[4]<<7) - 0xf00 + (tab[5] << 2)
-                    elif stab[2] == 'e' : matrx[i][k] = (tab[4]<<7) - 0xe00 + (tab[5] << 2)
-                    elif stab[2] == 'd' : matrx[i][k] = (tab[4]<<7) - 0xd00 + (tab[5] << 2)
-                    elif stab[2] == 'c' : matrx[i][k] = (tab[4]<<7) - 0xc00 + (tab[5] << 2)
-                    elif stab[2] == 'b' : matrx[i][k] = (tab[4]<<7) - 0xb00 + (tab[5] << 2)
-                    elif stab[2] == 'a' : matrx[i][k] = (tab[4]<<7) - 0xa00 + (tab[5] << 2)
-                    elif stab[2] == '9' : matrx[i][k] = (tab[4]<<7) - 0x900 + (tab[5] << 2)
-                    elif stab[2] == '8' : matrx[i][k] = (tab[4]<<7) - 0x800 + (tab[5] << 2)
-                    elif stab[2] == '7' : matrx[i][k] = (tab[4]<<7) - 0x700 + (tab[5] << 2)
-                    elif stab[2] == '6' : matrx[i][k] = (tab[4]<<7) - 0x600 + (tab[5] << 2)
-                    elif stab[2] == '5' : matrx[i][k] = (tab[4]<<7) - 0x500 + (tab[5] << 2)
-                    elif stab[2] == '4' : matrx[i][k] = (tab[4]<<7) - 0x400 + (tab[5] << 2)
-                    elif stab[2] == '3' : matrx[i][k] = (tab[4]<<7) - 0x300 + (tab[5] << 2)
-                    elif stab[2] == '2' : matrx[i][k] = (tab[4]<<7) - 0x200 + (tab[5] << 2)
-                    elif stab[2] == '1' : matrx[i][k] = (tab[4]<<7) - 0x100 + (tab[5] << 2)
-                else : matrx[i][k] = (tab[4]<<7) + (tab[5] << 2)
-    displayMatrx(matrx)
+def displayWord(word, scroll):
+    #word = "0123456789 :aąbcdefghijklłmnoprsśtuwxyz-,   16:56, piątek, 05-11-2021, 16:56"
+    scroll_time_s = 0.01 #0.050 for slow scroll // 0.03125 for 32FPS // 0.01667 for 60FPS
+    w, h = 8, 4 
+    targetMatrix = [[0 for x in range(w)] for y in range(h)]
 
-def scrollDate(slowo):
-
-    for j in range(0,2):
-
-        word = slowo
-
-        scrolledWord = "      "
-
-        word = word+scrolledWord
-
-        listedWord = list(word)
-        listedScrolledWord = list(scrolledWord)
-
-        for i in range(0, len(word)):
-            listedScrolledWord[0] = listedScrolledWord[1]
-            listedScrolledWord[1] = listedScrolledWord[2]
-            listedScrolledWord[2] = listedScrolledWord[3]
-            listedScrolledWord[3] = listedScrolledWord[4]
-            listedScrolledWord[4] = listedScrolledWord[5]
-            listedScrolledWord[5] = listedWord[i]
+    #print(targetMatrix)
+    address = 0x00 #iterujemy do 8
+    i = 1<<8-1
+    j = 0
+    for d in range(0,len(word)):
+        for column in range(0,5):
+            n = digits5B[indexes[word[d]]][column] 
             
-            scrolledWord = "".join(listedScrolledWord)
-            displayWord(scrolledWord)
-            if i >= len(word)-12 : sleep(0.1)
-            #sleep(0.1)
+            while i>0:
+
+                if n & i:
+                    targetMatrix[3][address] += 1
+                else :
+                    targetMatrix[3][address] += 0
+                if n != 0x00 or indexes[word[d]] == 10:
+                    targetMatrix[3][address] <<= 1
+                    targetMatrix[2][address] <<= 1
+                    targetMatrix[1][address] <<= 1
+                    targetMatrix[0][address] <<= 1
+                    if targetMatrix[3][address] >= 0x100 :
+                        targetMatrix[3][address] -= 0x100
+                        targetMatrix[2][address] += 1
+                    if targetMatrix[2][address] >= 0x100 :
+                        targetMatrix[2][address] -= 0x100
+                        targetMatrix[1][address] += 1
+                    if targetMatrix[1][address] >= 0x100 :
+                        targetMatrix[1][address] -= 0x100
+                        targetMatrix[0][address] += 1
+                    if targetMatrix[0][address] >= 0x100 :
+                        targetMatrix[0][address] -= 0x100
+
+                i >>= 1
+                address += 1
+
+
+            if scroll == True : 
+                displayMatrx(targetMatrix)
+                sleep(scroll_time_s)
+            address = 0    
+            i = 1<<8-1
+        if indexes[word[d]] != 10:
+            for addressTemp in range(0,8):
+                address=addressTemp
+                targetMatrix[3][address] <<= 1
+                targetMatrix[2][address] <<= 1
+                targetMatrix[1][address] <<= 1
+                targetMatrix[0][address] <<= 1
+                if targetMatrix[3][address] >= 0x100 :
+                    targetMatrix[3][address] -= 0x100
+                    targetMatrix[2][address] += 1
+                if targetMatrix[2][address] >= 0x100 :
+                    targetMatrix[2][address] -= 0x100
+                    targetMatrix[1][address] += 1
+                if targetMatrix[1][address] >= 0x100 :
+                    targetMatrix[1][address] -= 0x100
+                    targetMatrix[0][address] += 1
+                if targetMatrix[0][address] >= 0x100 :
+                    targetMatrix[0][address] -= 0x100
+        address = 0
+
+        if scroll == True : 
+            displayMatrx(targetMatrix)
+            sleep(scroll_time_s)
+    if scroll == False : displayMatrx(targetMatrix)
 
 def lightDetector():
     lightIntensity = adc.read()
