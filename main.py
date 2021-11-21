@@ -32,33 +32,30 @@ def secondTimer():
 
 def getTime():
     buff = getTimeAndDate()
-    str1 = ['','','','','','','',]
     tab = [0, 0, 0, 0, 0, 0, 0]
     for i in range (0,7):
         tab[i] = int(hex(buff[i]).replace('0x',''))
-        if i == 0 : seconds = tab[i]
-        if i == 1 : m = tab[i]
-        if i == 2 : h = tab[i]
     return tab[2], tab[1], tab[0]
 
 def getDate():
     buff = getTimeAndDate()
-    str1 = ['','','','','','','',]
+    str1 = ['','','','','','','']
     tab = [0, 0, 0, 0, 0, 0, 0]
     for i in range (0,7):
         tab[i] = int(hex(buff[i]).replace('0x',''))
         if tab[i] < 10 and i > 3 : str1[i] = "0" + str(tab[i])
         else : str1[i] = str(tab[i])
         if i == 6 : str1[i] = '20' + str(tab[i])
-        if tab[3] == 1 : str1[3] = "poniedziałek"
-        elif tab[3] == 2 : str1[3] = "wtorek"
-        elif tab[3] == 3 : str1[3] = "środa"
-        elif tab[3] == 4 : str1[3] = "czwartek"
-        elif tab[3] == 5 : str1[3] = "piątek"
-        elif tab[3] == 6 : str1[3] = "sobota"
-        elif tab[3] == 7 : 
-            str1[3] = "niedziela"
-            secondsCompensation() # compensating seconds 1spw (second per week)
+        if i == 3:
+            if tab[i] == 1 : str1[3] = "poniedziałek"
+            elif tab[i] == 2 : str1[3] = "wtorek"
+            elif tab[i] == 3 : str1[3] = "środa"
+            elif tab[i] == 4 : str1[3] = "czwartek"
+            elif tab[i] == 5 : str1[3] = "piątek"
+            elif tab[i] == 6 : str1[3] = "sobota"
+            elif tab[i] == 7 : 
+                str1[3] = "niedziela"
+                secondsCompensation() # compensating seconds 1spw (second per week)
     flagaCzasZ, flagaCzasL = False, False
     if tab[5] == 10 and tab[4] >= 25 and tab[3] == 7 : flagaCzasZ = True
     if tab[5] == 3 and tab[4] >= 25 and tab[3] == 7 : flagaCzasL = True
@@ -67,7 +64,7 @@ def getDate():
 
 def getTimeNDate():
     buff = getTimeAndDate()
-    str1 = ['','','','','','','',]
+    str1 = ['','','','','','','']
     tab = [0, 0, 0, 0, 0, 0, 0]
     for i in range (0,7):
         tab[i] = int(hex(buff[i]).replace('0x',''))
@@ -79,7 +76,6 @@ def getTimeNDate():
 
 def clock_init_():
     h, m, seconds = getTime()
-    date = getDate()
     if h < 10 : hour = '0' + str(h)
     else : hour = str(h)
     if m < 10 : minute = '0' + str(m)
