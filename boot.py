@@ -167,7 +167,10 @@ def secondsCompensation():
     RTCaddr = i2c.scan()
     buf = bytearray(1)
     i2c.readfrom_mem_into(RTCaddr[0], 0x00, buf)
-    if hex(buf[0]) == '0x59':
+    bufTmp = int(hex(buf[0]).replace('0x',''))
+    if '59' in hex(buf[0]):
         i2c.writeto_mem(RTCaddr[0], 0x00, bytes([0]))
+    elif '9' in hex(buf[0]):
+        i2c.writeto_mem(RTCaddr[0], 0x00, bytes([buf[0]+7]))
     else:
         i2c.writeto_mem(RTCaddr[0], 0x00, bytes([buf[0]+1]))

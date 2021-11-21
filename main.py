@@ -47,7 +47,8 @@ def getDate():
         else : str1[i] = str(tab[i])
         if i == 6 : str1[i] = '20' + str(tab[i])
         if i == 3:
-            if tab[i] == 1 : str1[3] = "poniedziałek"
+            if tab[i] == 1 : 
+                str1[3] = "poniedziałek"
             elif tab[i] == 2 : str1[3] = "wtorek"
             elif tab[i] == 3 : str1[3] = "środa"
             elif tab[i] == 4 : str1[3] = "czwartek"
@@ -55,6 +56,7 @@ def getDate():
             elif tab[i] == 6 : str1[3] = "sobota"
             elif tab[i] == 7 : 
                 str1[3] = "niedziela"
+                print("compensated")
                 secondsCompensation() # compensating seconds 1spw (second per week)
     flagaCzasZ, flagaCzasL = False, False
     if tab[5] == 10 and tab[4] >= 25 and tab[3] == 7 : flagaCzasZ = True
@@ -118,8 +120,8 @@ def handleConnectionRequests():
 
 display_init_()
 lightDetector()
-h, m, seconds = clock_init_()
 date, czasZimowy, czasLetni = getDate()
+h, m, seconds = clock_init_()
 #h, m, seconds = 23, 59, 55
 #date, czasZimowy, czasLetni = "poniedziałek, 04-10-2021", False, False
 _thread.start_new_thread(handleConnectionRequests, ())
