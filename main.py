@@ -1,5 +1,5 @@
 
-from boot import display_init_, displayWord, getTimeAndDate, lightDetector, timeChange
+from boot import display_init_, displayWord, getTimeAndDate, lightDetector, timeChange, secondsCompensation
 from time import sleep
 from machine import Timer, disable_irq, enable_irq
 import _thread
@@ -56,7 +56,9 @@ def getDate():
         elif tab[3] == 4 : str1[3] = "czwartek"
         elif tab[3] == 5 : str1[3] = "piątek"
         elif tab[3] == 6 : str1[3] = "sobota"
-        elif tab[3] == 7 : str1[3] = "niedziela"
+        elif tab[3] == 7 : 
+            str1[3] = "niedziela"
+            secondsCompensation() # compensating seconds 1spw (second per week)
     flagaCzasZ, flagaCzasL = False, False
     if tab[5] == 10 and tab[4] >= 25 and tab[3] == 7 : flagaCzasZ = True
     if tab[5] == 3 and tab[4] >= 25 and tab[3] == 7 : flagaCzasL = True
@@ -138,6 +140,7 @@ while True:
         DateUpdateRequired = True
     if h == 0 and m == 2 and DateUpdateRequired == True:
         date, czasZimowy, czasLetni = getDate() 
+        h, m, seconds = getTime() # time synchronization
         DateUpdateRequired = False
     if h == 2 and czasZimowy == True:
         h = h - 1

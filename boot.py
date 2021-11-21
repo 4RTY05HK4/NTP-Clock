@@ -162,3 +162,12 @@ def timeChange(flagaCzasZ, flagaCzasL):
         i2c.writeto_mem(RTCaddr[0], 0x02, bytes([buf[0]-1]))
     if flagaCzasL == True:
         i2c.writeto_mem(RTCaddr[0], 0x02, bytes([buf[0]+1]))
+
+def secondsCompensation():
+    RTCaddr = i2c.scan()
+    buf = bytearray(1)
+    i2c.readfrom_mem_into(RTCaddr[0], 0x00, buf)
+    if buf[0] == 59:
+        i2c.writeto_mem(RTCaddr[0], 0x00, bytes([0]))
+    else:
+        i2c.writeto_mem(RTCaddr[0], 0x00, bytes([buf[0]+1]))
