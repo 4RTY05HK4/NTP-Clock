@@ -56,7 +56,6 @@ def getDate():
             elif tab[i] == 6 : str1[3] = "sobota"
             elif tab[i] == 7 : 
                 str1[3] = "niedziela"
-                print("compensated")
                 secondsCompensation() # compensating seconds 1spw (second per week)
     flagaCzasZ, flagaCzasL = False, False
     if tab[5] == 10 and tab[4] >= 25 and tab[3] == 7 : flagaCzasZ = True
