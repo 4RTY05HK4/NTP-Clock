@@ -13,6 +13,7 @@ czasZimowy = False
 czasLetni = False
 DateUpdateRequired = False
 checkLightIntesity = False
+compensateTime = False
 
 timer = Timer(0)
 
@@ -196,6 +197,7 @@ def getTime():
 
 
 def getDate():
+    global compensateTime
     buff = getTimeAndDate()
     str1 = ["", "", "", "", "", "", ""]
     tab = [0, 0, 0, 0, 0, 0, 0]
@@ -220,9 +222,12 @@ def getDate():
                 str1[3] = "piątek"
             elif tab[i] == 6:
                 str1[3] = "sobota"
+                compensateTime = True
             elif tab[i] == 7:
                 str1[3] = "niedziela"
-                secondsCompensation()  # compensating seconds 1spw (second per week)
+                if compensateTime == True: 
+                    secondsCompensation()  # compensating seconds 1spw (second per week)
+                    compensateTime = False
     flagaCzasZ, flagaCzasL = False, False
     if tab[5] == 10 and tab[4] >= 25 and tab[3] == 7:
         flagaCzasZ = True
