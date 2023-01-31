@@ -79,7 +79,7 @@ def displayMatrx(matrx):
 def displayWord(word, scroll):
     # word = "0123456789 :aąbcdefghijklłmnoprsśtuwxyz-,   16:56, piątek, 05-11-2021, 16:56"
     scroll_time_s = (
-        0.01  # 0.050 for slow scroll // 0.03125 for 32FPS // 0.01667 for 60FPS
+        0.008  # 0.050 for slow scroll // 0.03125 for 32FPS // 0.01667 for 60FPS
     )
     w, h = 8, 4
     targetMatrix = [[0 for x in range(w)] for y in range(h)]
@@ -143,6 +143,27 @@ def displayWord(word, scroll):
                     targetMatrix[0][address] -= 0x100
         address = 0
 
+        if scroll == True:
+            displayMatrx(targetMatrix)
+            sleep(scroll_time_s)
+    for iterator in range(0, 3):
+        for addressTemp in range(0, 8):
+            address = addressTemp
+            targetMatrix[3][address] <<= 1
+            targetMatrix[2][address] <<= 1
+            targetMatrix[1][address] <<= 1
+            targetMatrix[0][address] <<= 1
+            if targetMatrix[3][address] >= 0x100:
+                targetMatrix[3][address] -= 0x100
+                targetMatrix[2][address] += 1
+            if targetMatrix[2][address] >= 0x100:
+                targetMatrix[2][address] -= 0x100
+                targetMatrix[1][address] += 1
+            if targetMatrix[1][address] >= 0x100:
+                targetMatrix[1][address] -= 0x100
+                targetMatrix[0][address] += 1
+            if targetMatrix[0][address] >= 0x100:
+                targetMatrix[0][address] -= 0x100
         if scroll == True:
             displayMatrx(targetMatrix)
             sleep(scroll_time_s)
@@ -300,11 +321,11 @@ s.listen(5)
 
 def handleConnectionRequests():
     station = network.WLAN(network.AP_IF)
-    station.active(True)
     station.config(essid="NTPserver", hidden=True, authmode=4, password="pasz12port")
     station.ifconfig(
-        ("192.168.137.25", "255.255.255.0", "192.168.137.1", "192.168.137.1")
+       ("192.168.137.25", "255.255.255.0", "192.168.137.1", "192.168.137.1")
     )
+    station.active(True)
     # station.connect(ssid, password)
     while True:
 
