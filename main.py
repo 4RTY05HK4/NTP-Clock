@@ -1,8 +1,9 @@
 from boot import i2c, adc, spi, clkPin, loadPin
 from chars import indexes, digits5B
-from time import sleep
+import time
 from machine import Timer, disable_irq, enable_irq
 import _thread
+import ntptime
 
 interruptCounter = 0
 seconds = 0
@@ -304,10 +305,26 @@ def clock_init_():
     displayWord(time, False)
     return h, m, seconds
 
+def syncTime():
+    ntptime.settime()
+    nowtime = list(time.localtime(time.time() + 2*60*60))
+    nowtime[0] = nowtime[0]-2000
+    buf = bytearray(nowtime)
+
+    i2c.writeto_mem(0x68, 0x00, bytes([int(str(buf[5]), 16)]))      # 0 sekunda
+    i2c.writeto_mem(0x68, 0x01, bytes([int(str(buf[4]), 16)]))      # 1 minuta 
+    i2c.writeto_mem(0x68, 0x02, bytes([int(str(buf[3]), 16)]))      # 2 godzina
+    i2c.writeto_mem(0x68, 0x03, bytes([int(str(buf[6]), 16)]))      # 3 dzien tygodnia
+    i2c.writeto_mem(0x68, 0x04, bytes([int(str(buf[2]), 16)]))      # 4 dzien
+    i2c.writeto_mem(0x68, 0x05, bytes([int(str(buf[1]), 16)]))      # 5 miesiac
+    i2c.writeto_mem(0x68, 0x06, bytes([int(str(buf[0]), 16)]))      # 6 rok
 
 def requestHandler(requestCode):
-    if requestCode == 6:
+    if requestCode == 1:
         requestResponse = getTimeNDateToString()
+    elif requestCode == 2:
+        syncTime()
+        requestResponse = "Time sync \n" +  getTimeNDateToString()
     else:
         requestResponse = "AuthError"
 
@@ -320,12 +337,15 @@ s.listen(5)
 
 
 def handleConnectionRequests():
-    station = network.WLAN(network.AP_IF)
-    station.config(essid="NTPserver", hidden=True, authmode=4, password="pasz12port")
-    station.ifconfig(
-       ("192.168.137.25", "255.255.255.0", "192.168.137.1", "192.168.137.1")
-    )
+    # station = network.WLAN(network.AP_IF)
+    # station.config(essid="NTPserver", hidden=True, authmode=4, password="pasz12port")
+    # station.ifconfig(
+    #    ("192.168.137.25", "255.255.255.0", "192.168.137.1", "192.168.137.1")
+    # )
+    # station.active(True)
+    station = network.WLAN(network.STA_IF) 
     station.active(True)
+    station.connect("TP-Link_24", "pasz12port") # Connect to an AP
     # station.connect(ssid, password)
     while True:
 
@@ -333,8 +353,17 @@ def handleConnectionRequests():
             conn, addr = s.accept()
             request = conn.recv(1024)
             request = str(request)
-            requestCode = request.find("/?getTimeNDate")
-            response = requestHandler(requestCode)
+            requestCode = -1
+            if request.find("/?getTimeNDate") != -1:
+                requestCode = 1 # 1 get time n date request
+                response = requestHandler(requestCode)
+            elif request.find("/?syncTimeNDate") != -1:
+                requestCode = 2 # sync time n date with inline rtc
+                response = requestHandler(requestCode)
+            else:
+                requestCode = -1 # sync time n date with inline rtc
+                response = requestHandler(requestCode)
+            print("get ///" + str(requestCode) + "///")
             conn.send("HTTP/1.1 200 OK\n")
             conn.send("Content-Type: text/html\n")
             conn.send("Connection: close\n\n")
@@ -380,7 +409,7 @@ while True:
         minute = "0" + str(m)
     else:
         minute = str(m)
-    time = " " + hour + ":" + minute
+    time_str = " " + hour + ":" + minute
     if seconds % 9 == 0:
         checkLightIntesity = True
     if seconds % 10 == 0 and checkLightIntesity == True:
@@ -388,8 +417,8 @@ while True:
         checkLightIntesity = False
     if seconds == 0:
         if (h > 21 or h < 6) and m % 5 == 0:
-            displayWord(date + time, True)
+            displayWord(date + time_str, True)
         elif h >= 6 and h <= 21:
-            displayWord(date + time, True)
-        displayWord(time, False)
+            displayWord(date + time_str, True)
+        displayWord(time_str, False)
     secondTimer()
