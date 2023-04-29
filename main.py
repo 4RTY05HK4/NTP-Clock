@@ -314,7 +314,7 @@ def syncTime():
     i2c.writeto_mem(0x68, 0x00, bytes([int(str(buf[5]), 16)]))      # 0 sekunda
     i2c.writeto_mem(0x68, 0x01, bytes([int(str(buf[4]), 16)]))      # 1 minuta 
     i2c.writeto_mem(0x68, 0x02, bytes([int(str(buf[3]), 16)]))      # 2 godzina
-    i2c.writeto_mem(0x68, 0x03, bytes([int(str(buf[6]), 16)]))      # 3 dzien tygodnia
+    i2c.writeto_mem(0x68, 0x03, bytes([int(str(buf[6]), 16)+1]))      # 3 dzien tygodnia
     i2c.writeto_mem(0x68, 0x04, bytes([int(str(buf[2]), 16)]))      # 4 dzien
     i2c.writeto_mem(0x68, 0x05, bytes([int(str(buf[1]), 16)]))      # 5 miesiac
     i2c.writeto_mem(0x68, 0x06, bytes([int(str(buf[0]), 16)]))      # 6 rok
